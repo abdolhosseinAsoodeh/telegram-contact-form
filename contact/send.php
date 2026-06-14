@@ -28,7 +28,7 @@ $message = trim($input['message'] ?? '');
 // Simple validation
 if ($name === '' || $phone === '' || $message === '') {
     http_response_code(400);
-    echo json_encode(["ok" => false, "error" => "فیلدهای ضروری خالی است"]);
+    echo json_encode(["ok" => false, "error" => "Required fields are empty"]);
     exit;
 }
 
