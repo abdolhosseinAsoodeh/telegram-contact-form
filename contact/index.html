@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+  <html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>contact us</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="info-panel">
+      <div>
+        <h1>contact us</h1>
+        <p>For any questions, suggestions, or collaborations, please fill out the form below. Your message will be sent directly to our team and we will respond as soon as possible.</p>
+  
+        <div class="info-items">
+          <div class="info-item">
+            <div class="icon">📍</div>
+            <div>
+              <div class="label">Address</div>
+              <div class="value">123, Azadi Street, Tehran</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="icon">📞</div>
+            <div>
+              <div class="label">Phone</div>
+              <div class="value">021-12345678</div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="icon">✉️</div>
+            <div>
+              <div class="label">Email</div>
+              <div class="value">info@example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="info-footer">
+        All messages sent through this form are instantly transferred to our team's Telegram bot.
+      </div>
+    </div>
+  
+    <div class="form-panel">
+      <h2>Send us a Message</h2>
+      <p class="sub">Fill out the form below, your message will be sent directly to Telegram.</p>
+  
+      <form id="contactForm">
+        <div class="row2">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" required placeholder="Ali Mohammadi">
+          </div>
+          <div class="field">
+            <label for="phone">Contact number</label>
+            <input type="tel" id="phone" name="phone" required placeholder="09xxxxxxxxx">
+          </div>
+        </div>
+  
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="example@mail.com">
+        </div>
+  
+        <div class="field">
+          <label for="message">Your Message</label>
+          <textarea id="message" name="message" required placeholder="Write your message here..."></textarea>
+        </div>
+  
+        <button type="submit" class="submit-btn" id="submitBtn">SEND</button>
+        <div class="status-msg" id="statusMsg"></div>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+  
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+  
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+  
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+      statusMsg.className = "status-msg";
+  
+      try {
+        const res = await fetch("send.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, phone, email, message })
+        });
+  
+        const data = await res.json();
+  
+        if (data.ok) {
+          statusMsg.textContent = "Your message was sent successfully. We will contact you soon.";
+          statusMsg.className = "status-msg success";
+          form.reset();
+        } else {
+          throw new Error(data.error || "Error sending message");
+        }
+      } catch (err) {
+        statusMsg.textContent = "There was an error sending the message: " + err.message;
+        statusMsg.className = "status-msg error";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "send message";
+      }
+    });
+  </script>
+  
+  </body>
+
+  </html>

@@ -1,0 +1,69 @@
+# ============================
+# Project Security Settings Contact Us
+# ============================
+
+# Prevent displaying the folder file list
+Options -Indexes
+
+# Set the default page
+DirectoryIndex contact.html
+
+# ------------------------------------
+# Restrict access to send.php
+# Only requests from the same domain (Referer) are allowed
+# ------------------------------------
+<Files "send.php">
+    Order Allow,Deny
+    Allow from all
+
+    # Prevent direct access without a valid referrer
+    RewriteEngine On
+    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yourdomain\.com [NC]
+    RewriteRule ^send\.php$ - [F,L]
+</Files>
+
+# ------------------------------------
+# Block access to sensitive files
+# ------------------------------------
+<FilesMatch "\.(env|log|ini|bak|sql|config)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ------------------------------------
+# Security headers
+# ------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ------------------------------------
+# Prevent send.php from being cached
+# ------------------------------------
+<IfModule mod_headers.c>
+    <Files "send.php">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires 0
+    </Files>
+</IfModule>
+
+# ------------------------------------
+# Enable compression (optional - improves speed)
+# ------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# ------------------------------------
+# Prevent PHP code from running in the uploads folder (if added in the future)
+# ------------------------------------
+# <Directory "/uploads">
+#     <FilesMatch "\.php$">
+#         Order Allow,Deny
+#         Deny from all
+#     </FilesMatch>
+# </Directory>
